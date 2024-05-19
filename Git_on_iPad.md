@@ -72,15 +72,15 @@ I think that the python sources I am working on are still asking for Python 2 pa
 
 With my own programs I had no serious problems to switch from Python 2 to Python 3. So I did not learn anything about the problems you have to handle. As I don't have that knowledge I will not try to make the software compatible for both language releases. Programs I modify will be designed and tested for Python 3.10 only.
 
-*** Modifcations on some details ***
+### Modifcations on some details ###
 
 In some cases the language had small incompatible changes, which need software modification.
 
-*** Renamed Packages ***
+### Renamed Packages ###
 
 In some cases packages had been renamed and I had to adjust import statements.
 
-*** Separation of Bytes Sequences and Text Strings ***
+### Separation of Bytes Sequences and Text Strings ###
 
 I looks to me that in Python 2 byte sequences and character sequences had been quite compatible. But in Python 3 they are different things.
 
