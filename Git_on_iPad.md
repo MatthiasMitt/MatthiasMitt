@@ -37,15 +37,20 @@ StaSh
 
 With the current versions of iPadOS and Pythonista StaSh was not working any longer.
 In internet I read that others had those problems too and offered some suggestions.
+
+Issuse #491, #484, ...
+
 With two or three corrections StaSh came alive and was able to execute
 'autoupdate'.
 During some short tests I recognized, that 'printhex' was working only after
 'autoupdate dev'.
 I decided to go on with the 'dev'-branch.
 
+It is hard to use StaSh because some kind of autocorrection is very often modifying my commands while I am typing. I thing is has been reported as #506, #497 already.
+
 A couple of commands seem to work properly, but 'git' did not. 'git' loaded and installed some additional software but after it still did not work.
 
-For 'git' on 'StaSh' I did not find a solution in internet, so I started debugging.
+For 'git' on 'StaSh' I did not find a solution in internet, so I started debugging. Somehow I could not draw help from issues #397 nor #357.
 
 StaSh and git clone (unfinished)
 ================================
@@ -62,7 +67,8 @@ I created an empty directory and started to debug some less complicated commands
 * git add
 * git commit
 * git status
-* git diff 
+* git diff
+
 After several program modifications four commands seem to work reasonably with a small example.
 'git diff' gives me some head aches still.
 
@@ -221,7 +227,31 @@ Modifcations to stash/lib/gittle/utils
 stash/lib/gittle/utils/git.py
 -----------------------------
 
-nn
+Near line 3:
+
+     # MatthiasMitt nach fremden Vorschlägen:
+     try:
+         from StringIO import StringIO ## for Python 2
+     except ImportError:
+         from io import StringIO ## for Python 3
+
+Near line 210 in is_sha() :
+
+     MatthiasMitt   basestring   is gone.
+     # I did not find a good definion about sha1-hashes used by git.
+     # I think it is either 20 arbitray bytes or a bytes-object with
+     #         40 hexadecimal digits.
+     # Do I have to expect string-objects with hexadecimal digits here?
+     #
+     #old: return isinstance(sha, basestring) and len(sha) == 40
+     if isinstance(sha, bytes) and len(sha) == 40:
+        return True
+     elif isinstance(sha, str) and len(sha) == 40:
+        print('debug(gittle/utils/git/is_sha)','I allowed type str!?')
+        return True
+     else:
+        return False
+
 
 Modifcations to stash/lib/dulwich
 =================================
@@ -341,14 +371,14 @@ stash/lib/dulwich/objects.py
 Near line 190:
 
 def git_line(*items):
-    """Formats items into a space sepreated line."""
-    #MatthiasMitt
-    #old: return b' '.join(items) + b'\n'
-    #
-    items_b = []
-    bad_ix  = -1
-    ix      = 0
-    for item in items:
+     """Formats items into a space sepreated line."""
+     #MatthiasMitt
+     #old: return b' '.join(items) + b'\n'
+     #
+     items_b = []
+     bad_ix  = -1
+     ix      = 0
+     for item in items:
         if type(item) == str:
             item_b = item.encode('utf-8')      #  'ascii'? Handle or disallow?
             print('debug(dulwich.objects.git_line)','has type str:',item)
@@ -357,11 +387,11 @@ def git_line(*items):
             item_b = item
         items_b.append(item_b)
         ix += 1
-    if bad_ix >= 0:
+     if bad_ix >= 0:
         print('debug(dulwich.objects.git_line)','bad index:',bad_ix)
         print('debug(dulwich.objects.git_line)',items)
-    return b' '.join(items_b) + b'\n'
-    #.
+     return b' '.join(items_b) + b'\n'
+     #.
 
 Near line 260 in as_legacy_object_chunks():
 
@@ -605,7 +635,7 @@ Near line 447 in __getitem__:
             name = name.encode('utf-8')
         if not isinstance(name, bytes):
 
-Near line 550 in xxxxx lots of tracing:
+Near line 550 in do_commit() lots of tracing:
 
         import time
         print('debug(repo.do_commit:547)')
